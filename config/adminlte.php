@@ -316,10 +316,8 @@ return [
             'can' => 'manage-blog',
         ],
         [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
+            'text' => 'Manage Kategori',
+            'url' => '../kategori',
             'label_color' => 'success',
         ],
         ['header' => 'account_settings'],
