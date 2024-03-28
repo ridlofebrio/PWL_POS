@@ -101,15 +101,25 @@ class UserController extends Controller
         return view('user_tambah');
       }
 
-    public function tambah_simpan(Request $request){
-        UserModel::create([
-            'username' => $request->username,
-            'nama' => $request->nama,
-            'password' => Hash::make($request->password),
-            'level_id'=>$request->level_id
-            ]
-        );
-        return view('/user');
+    public function tambah_simpan(){
+        
+
+            request()->validate([
+                'username' => 'required',
+                'nama' => 'required',
+                'password' => 'required',
+                'level_id' => 'required',
+            ]);
+    
+            $data = [
+                'username' => request()->username,
+                'nama' => request()->nama,
+                'password' => Hash::make(request()->password),
+                'level_id' => request()->level_id,
+            ];
+            UserModel::create($data);
+    
+            return redirect('/user');
     }
     public function hapus($id){
         $user = UserModel::find($id);
@@ -119,8 +129,8 @@ class UserController extends Controller
     }
 
     public function index() {
-        $user = UserModel::with('level') -> get() ;
-        dd($user);
+        $user = UserModel::with('level')->get();
+        return view('user', ['data' => $user]);
     }
 }
 

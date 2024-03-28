@@ -9,9 +9,9 @@
         <div class="card-header">
             <h3 class="card-title">Form Tambah Data User</h3>
         </div>
-        {{ csrf_field() }}
 
         <form action="/user/tambah_simpan" method="post">
+            @csrf
             <div class="card-body">
                 <div class="form-group">
                     <label for="level_nama">Level id</label>
