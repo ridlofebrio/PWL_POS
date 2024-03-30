@@ -180,7 +180,7 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $useri = m_user::find($id);
+        $useri = m_user::findOrFail($id);
         return view('user.user_edit', compact('useri'));
     }
 
