@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\dd;
-
+use App\Models\m_user;
 class UserController extends Controller
 {
     // public function index(){
@@ -79,59 +79,139 @@ class UserController extends Controller
 
     // }
     
-    public function ubah($id) {
-        $user = UserModel::find($id);
-        return view('user_ubah',['data'=> $user]);
-    }
+    // public function ubah($id) {
+    //     $user = UserModel::find($id);
+    //     return view('user_ubah',['data'=> $user]);
+    // }
 
-    public function ubah_simpan($id, Request $request)
-    {
-        $user = UserModel::find($id);
+    // public function ubah_simpan($id, Request $request)
+    // {
+    //     $user = UserModel::find($id);
 
-        $user->username = $request->username;
-        $user->nama = $request->nama;
-        $user->password = Hash::make('$request->password');
-        $user->level_id = $request->level_id;
+    //     $user->username = $request->username;
+    //     $user->nama = $request->nama;
+    //     $user->password = Hash::make('$request->password');
+    //     $user->level_id = $request->level_id;
 
-        $user->save();
+    //     $user->save();
 
-        return redirect('/user');
-    }
-    public function tambah() {
-        return view('user_tambah');
-      }
+    //     return redirect('/user');
+    // }
+    // public function tambah() {
+    //     return view('user_tambah');
+    //   }
 
-    public function tambah_simpan(){
+    // public function tambah_simpan(){
         
 
-            request()->validate([
-                'username' => 'required',
-                'nama' => 'required',
-                'password' => 'required',
-                'level_id' => 'required',
+    //         request()->validate([
+    //             'username' => 'required',
+    //             'nama' => 'required',
+    //             'password' => 'required',
+    //             'level_id' => 'required',
+    //         ]);
+    
+    //         $data = [
+    //             'username' => request()->username,
+    //             'nama' => request()->nama,
+    //             'password' => Hash::make(request()->password),
+    //             'level_id' => request()->level_id,
+    //         ];
+    //         UserModel::create($data);
+    
+    //         return redirect('/user');
+    // }
+    // public function hapus($id){
+    //     $user = UserModel::find($id);
+    //     $user->delete();
+
+    //     return redirect('/user');
+    // }
+
+    // public function index() {
+    //     $user = UserModel::with('level')->get();
+    //     return view('user', ['data' => $user]);
+    // }
+
+    public function index()
+    {
+        //fungsi eloquent menampilkan data menggunakan pagination
+        $useri = m_user::all(); // Mengambil semua isi tabel
+        return view('user.user_index', compact('useri'))->with('i');
+
+    }
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('user.user_create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //melakukan validasi data
+        $request->validate([
+            'user_id' => 'max 20',
+            'username' => 'required',
+            'nama' => 'required',
+        ]);
+        m_user::create($request->all());
+        return redirect()->route('user.user_index')
+        ->with('success', 'user Berhasil Ditambahkan');
+
+    
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id, m_user $useri)
+    {
+        $useri = m_user::findOrFail($id);
+        return view('user.user_show', compact('useri'));
+
+    }
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $useri = m_user::find($id);
+        return view('user.user_edit', compact('useri'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'username' => 'required',
+            'nama' => 'required',
+            'password' => 'required',
             ]);
-    
-            $data = [
-                'username' => request()->username,
-                'nama' => request()->nama,
-                'password' => Hash::make(request()->password),
-                'level_id' => request()->level_id,
-            ];
-            UserModel::create($data);
-    
-            return redirect('/user');
-    }
-    public function hapus($id){
-        $user = UserModel::find($id);
-        $user->delete();
-
-        return redirect('/user');
+            //fungsi eloquent untuk mengupdate data inputan kita
+            m_user::find($id)->update($request->all());
+            //jika data berhasil diupdate, akan kembali ke halaman utama
+            return redirect()->route('user.user_index')
+            ->with('success', 'Data Berhasil Diupdate');
+            
     }
 
-    public function index() {
-        $user = UserModel::with('level')->get();
-        return view('user', ['data' => $user]);
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $useri= m_user::findOrFail($id)->delete();
+        return \redirect()->route('user.user_index')
+        -> with('success', 'data Berhasil Dihapus');
     }
+
 }
 
 

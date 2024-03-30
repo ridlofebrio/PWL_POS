@@ -51,3 +51,5 @@ Route::get('/kategori', [KategoriController::class, 'index']);
 Route::post('/kategori', [KategoriController::class, 'store']);
 
 Route::resource('m_user',POSController::class);
+
+Route::resource('user',UserController::class);
