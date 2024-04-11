@@ -2,15 +2,12 @@
 
 namespace App\DataTables;
 
-use App\Models\Kategori;
 use App\Models\KategoriModel;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class KategoriDataTable extends DataTable
@@ -25,9 +22,9 @@ class KategoriDataTable extends DataTable
         return (new EloquentDataTable($query))
             ->setRowId('id')
             ->addColumn('action', function($row) {
-                $tombol = '<a href="kategori/edit/'.$row->kategori_id.'" class="edit btn btn-warning btn-xs"><i class="fa fa-pencil"></i> Ubah</a>';
-                $tombol = $tombol.' <a href="kategori/hapus/'.$row->kategori_id.'" class="delete btn btn-danger btn-xs"><i class="fa fa-trash"></i> Hapus</a>';                
-                return $tombol;
+                $btn = '<a href="kategori/edit/'.$row->kategori_id.'" class="edit btn btn-primary btn-sm">Edit</a>';
+                $btn = $btn.' <a href="kategori/delete/'.$row->kategori_id.'" class="delete btn btn-danger btn-sm">Delete</a>';
+                return $btn;
             });
     }
 
@@ -67,21 +64,25 @@ class KategoriDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+    /*         Column::computed('action')
+                  ->exportable(false)
+                  ->printable(false)
+                  ->width(60)
+                  ->addClass('text-center'), */
             Column::make('kategori_id'),
             Column::make('kategori_kode'),
             Column::make('kategori_nama'),
             Column::make('created_at'),
             Column::make('updated_at'),
-            Column::make('action'),
+            Column::make('action')
         ];
     }
-    
-    
 
     /**
      * Get the filename for export.
      */
     protected function filename(): string
     {
-        return 'Kategori_' . date('YmdHis');}
+        return 'Kategori_' . date('YmdHis');
+    }
 }
