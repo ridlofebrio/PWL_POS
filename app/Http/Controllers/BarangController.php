@@ -57,6 +57,7 @@ public function create(){
     ];
     $kategori = KategoriModel::all();
     $activeMenu = 'barang';
+
     return view('barang.create', ['breadcrumb' => $breadcrumb,'page'=>$page, 'kategori' => $kategori, 'activeMenu' => $activeMenu]);
 }
 
@@ -64,8 +65,8 @@ public function create(){
     {
         //melakukan validasi data
         $request->validate([
-            'barang_kode' => 'required|string|min:3|unique:m_barang,barang_kode',
-            'barang_nama' => 'required|string|max:100',
+            'barang_kode' => 'required|string',
+            'barang_nama' => 'required|string',
             'harga_beli' => 'required|integer',
             'harga_jual' => 'required|integer',
             'kategori_id' => 'required|integer',
@@ -113,22 +114,27 @@ public function create(){
         ];
 
         $activeMenu = 'barang';
+        $kategori = KategoriModel::all();
 
-        return view('barang.edit', compact('breadcrumb', 'page', 'barang', 'activeMenu'));
+        return view('barang.edit', compact('breadcrumb', 'page', 'barang', 'activeMenu','kategori'));
     }
 
     public function update(Request $request, string $id)
     {
         $request->validate([
             'barang_kode' => 'required|string',
-            'barang_name' => 'required|string',
-            'barang_id' => 'required|integer'
+            'barang_nama' => 'required|string',
+            'harga_beli' => 'required|integer',
+            'harga_jual' => 'required|integer',
+            'kategori_id' => 'required|integer',
         ]);
 
         $barang = barangModel::find($id)->update([
-            'barang_id' => $request->barang_id,
-            'barang_name' => $request->barang_name,
-            'barang_kode' => $request->barang_kode
+            'barang_kode' => $request->barang_kode,
+            'barang_nama' => $request->barang_nama,
+            'harga_beli' => $request->harga_beli,
+            'harga_jual' => $request->harga_jual,
+            'kategori_id' => $request->kategori_id
         ]);
 
         return redirect('/barang')->with('success', 'Data barang berhasil diubah');
