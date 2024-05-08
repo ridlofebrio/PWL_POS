@@ -10,15 +10,6 @@
         <form method="POST" action="{{ url('stok') }}" class="form-horizontal">
             @csrf
             <div class="form-group row">
-                <label class="col-1 control-label col-form-label">stok ID</label>
-                <div class="col-11">
-                    <input type="text" class="form-control" id="stok_id" name="stok_id" value="{{ old('stok_id') }}" required>
-                    @error('stok_id')
-                    <small class="form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>        
-            </div>
-            <div class="form-group row">
                 <label class="col-1 control-label col-form-label">Barang</label>
                 <div class="col-11">
                     <select class="form-control" id="barang_id" name="barang_id" required>

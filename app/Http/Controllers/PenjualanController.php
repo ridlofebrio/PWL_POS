@@ -89,7 +89,10 @@ class PenjualanController extends Controller
         }
 
         try {
+            
+            PenjualanDetailModel::where('penjualan_id', $id)->delete();
             PenjualanModel::destroy($id);
+            
             return redirect('/penjualan')->with('success', 'Data penjualan berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
             return redirect('/penjualan')->with('error', 'Data penjualan gagal dihapus karena masih terdapat tabel lain yang terikat dengan data ini');
@@ -112,42 +115,65 @@ class PenjualanController extends Controller
         return view('penjualan.create', ['breadcrumb' => $breadcrumb,'page'=> $page, 'barang' => $barang, 'activeMenu'=> $activeMenu,'user'=> $user]);
     }
     
-        public function store(Request $request)
-        {
-            //melakukan validasi data
-            $request->validate([
-                'jumlah' => 'required|integer',
-                'user_id' => 'required|integer',
-                'barang_id' => 'required|integer',
-                'pembeli' => 'required|string',
-                'penjual_code' => 'required|string', // Added validation rule
-                'harga' => 'required|integer',
-            ]);
-            
-            $penjualan = PenjualanModel::create([
-                'user_id' => $request->user_id,
-                'pembeli' => $request->pembeli,
-                'penjual_code' => $request->penjual_code,
-                'penjualan_tanggal' => now(),
-            ]);
-            
-            $penjualan_id = PenjualanModel::select('penjualan_id')->orderBy('penjualan_id', 'desc')->first();
+    public function store(Request $request)
+{
+    // Melakukan validasi data
+    $request->validate([
+        'user_id' => 'required|integer',
+        'pembeli' => 'required|string',
+        // 'penjual_code' => 'required|string',
+        'barang_id.*' => 'required|integer', 
+        'harga.*' => 'required|integer',
+        'jumlah.*' => 'required|integer',
+    ]);
 
-            PenjualanDetailModel::create([
-                'penjualan_id' => $penjualan_id->pluck('penjualan_id')->first(),
-                'barang_id' => $request->barang_id,
-                'harga' => $request->harga,
-                'jumlah' => $request->jumlah
-              ]);
-
-            $barang_id = $request->barang_id;
-            $jumlah = $request->jumlah;
-            $date = now();
-            $stok = (StokModel::where('barang_id', $barang_id)->value('stok_jumlah')) - $jumlah;
-            StokModel::where('barang_id', $barang_id)->update(['stok_jumlah' => $stok, 'stok_tanggal' => $date, 'user_id' => $request->user_id]);
+    $failedTransactions = [];
     
-            return redirect('/stok')->with('success', 'Data berhasil ditambahkan');
-        }
+    // Periksa ketersediaan stok sebelum membuat transaksi
+    foreach ($request->barang_id as $index => $barang_id) {
+        // Ambil jumlah stok barang yang tersedia
+        $stok = StokModel::where('barang_id', $barang_id)->first();
 
+        if ($stok && $request->jumlah[$index] > $stok->stok_jumlah) {
+            // Tambahkan barang yang stoknya tidak mencukupi ke array failedTransactions
+            $failedTransactions[] = $barang_id;
+        }
+    }
+
+    // Jika ada barang yang stoknya tidak mencukupi, kembalikan dengan pesan kesalahan
+    if (!empty($failedTransactions)) {
+        return redirect('/penjualan')->with('error', 'Stok Gak Cukup ');
+    }
+
+
+
+    $counter = (PenjualanModel::selectRaw("CAST(RIGHT(penjual_code, 3) AS UNSIGNED) AS counter")->orderBy('penjualan_id', 'desc')->value('counter')) + 1;
+    $penjualan_kode = 'PJ' . sprintf("%04d", $counter);
+
+    // Membuat entri penjualan
+    $penjualan = PenjualanModel::create([
+        'user_id' => $request->user_id,
+        'pembeli' => $request->pembeli,
+        'penjual_code' => $penjualan_kode,
+        'penjualan_tanggal' => now(),
+    ]);
+
+
+    // Menyimpan setiap barang yang dibeli ke dalam database penjualan detail
+    foreach ($request->barang_id as $key => $barang_id) {
+        PenjualanDetailModel::create([
+            'penjualan_id' => $penjualan->penjualan_id,
+            'barang_id' => $barang_id,
+            'harga' => $request->harga[$key],
+            'jumlah' => $request->jumlah[$key],
+        ]);
+
+      
+        $stok = StokModel::where('barang_id', $barang_id)->value('stok_jumlah') - $request->jumlah[$key];
+        StokModel::where('barang_id', $barang_id)->update(['stok_jumlah' => $stok]);
+    }
+
+    return redirect('/stok')->with('success', 'Data berhasil ditambahkan');
+}
        
 }

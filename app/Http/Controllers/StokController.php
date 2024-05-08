@@ -76,15 +76,18 @@ public function create(){
         $request->validate([
             'stok_jumlah' => 'required|integer',
             'user_id' => 'required|integer',
-            'barang_id' => 'required|integer',
-            'stok_id' => 'required|integer',
+            'barang_id' => 'required|integer'
         ]);
 
+        $existingStok = StokModel::where('barang_id', $request->barang_id)->first();
+        if ($existingStok) {
+            return redirect('/stok')->with('error', 'Barang sudah memiliki stok. Silakan lakukan edit jika diperlukan.');
+        }
+        
         StokModel::create([
             'stok_jumlah' => $request->stok_jumlah,
             'user_id' => $request->user_id,
             'barang_id' => $request->barang_id,
-            'stok_id' => $request->stok_id,
             'stok_tanggal' => now()
         ]);
 

@@ -10,16 +10,6 @@
         <form method="POST" action="{{ url('kategori') }}" class="form-horizontal">
             @csrf
             <div class="form-group row">
-                <label class="col-1 control-label col-form-label">kategori ID</label>
-                <div class="col-11">
-                    <input type="text" class="form-control" id="kategori_id" name="kategori_id" value="{{ old('kategori_id') }}" required>
-                    @error('kategori_id')
-                    <small class="form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-                
-            </div>
-            <div class="form-group row">
                 <label class="col-1 control-label col-form-label">Kode kategori</label>
                 <div class="col-11">
                     <input type="text" class="form-control" id="kategori_kode" name="kategori_kode" value="{{ old('kategori_kode') }}" required>

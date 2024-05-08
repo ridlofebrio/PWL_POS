@@ -16,7 +16,7 @@
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
-        //tempat filter
+     
 
         <table class="table table-bordered table-striped table-hover table-sm" id="table_penjualan">
             <thead>

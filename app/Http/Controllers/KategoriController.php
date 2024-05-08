@@ -69,11 +69,9 @@ public function create(){
         $request->validate([
             'kategori_kode' => 'required|string',
             'kategori_nama' => 'required|string',
-            'kategori_id' => 'required|integer'
         ]);
 
         kategoriModel::create([
-            'kategori_id' => $request->kategori_id,
             'kategori_nama' => $request->kategori_nama,
             'kategori_kode' => $request->kategori_kode
         ]);

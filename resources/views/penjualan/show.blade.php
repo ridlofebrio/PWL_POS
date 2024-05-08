@@ -35,17 +35,19 @@
         </tr>
       </thead>
       <tbody>
-        <?php $idx = 1; ?>
+        <?php $idx = 1; $tot = 0 ?>
         @foreach ($penjualan_detail as $dt)
         <tr>
           <td>{{ $idx++ }}</td>
           <td>{{ $dt->barang->barang_nama }}</td>
           <td>{{ $dt->harga }}</td>
           <td>{{ $dt->jumlah }}</td>
+          <?php $tot += $dt->jumlah * $dt->harga; ?>
         </tr>
         @endforeach
       </tbody>
     </table>
+    <h5 style="text-align: right"><b>Total : {{ $tot }}</b></h5>
   </div>
   @endempty
 

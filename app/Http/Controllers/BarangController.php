@@ -72,6 +72,11 @@ public function create(){
             'kategori_id' => 'required|integer',
         ]);
 
+        $existingBarang = BarangModel::where('barang_nama', $request->barang_nama)->first();
+        if ($existingBarang) {
+            return redirect('/barang')->with('error', 'Barang Telah Ada Tolong Lakukan Edit');
+        }
+
         BarangModel::create([
             'barang_kode' => $request->barang_kode,
             'barang_nama' => $request->barang_nama,
