@@ -25,6 +25,7 @@ class LevelController extends Controller
     public function destroy(LevelModel $user){
         $user->delete();
         return response()->json([
+            $user,
             'success' => true,
             'message' => 'Data terhapus'
         ]);
