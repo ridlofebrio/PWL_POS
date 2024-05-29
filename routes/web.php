@@ -9,6 +9,7 @@ use App\Http\Controllers\POSController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\Coba;
+use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\WelcomeController;
@@ -115,6 +116,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('manager',ManagerController::class);
     });
 });
+
+Route::get('/file-upload', [FileUploadController::class, 'fileUpload']);
+Route::post('/file-upload', [FileUploadController::class, 'prosesFileUpload']);
 // Route::get('/level', [LevelController::class, 'index']);
 // Route::post('/level', [LevelController::class, 'create']);
 // Route::get('/user', [UserController::class, 'index']);

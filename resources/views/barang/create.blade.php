@@ -1,7 +1,8 @@
  @extends('layout.template')
 
 @section('content')
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <div class="card card-outline card-primary">
     <div class="card-header">
         <h3 class="card-title">{{ $page->title }}</h3>
@@ -61,6 +62,13 @@
                     <small class="form-text text-danger">{{ $message }}</small>
                     @enderror
                 </div>
+            </div>
+            <div class="mb-3">
+                <label for="berkas" class="form-label">Gambar Profile</label>
+                <input type="file" class="form-control" id="berkas" name="berkas">
+                @error('berkas')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
     <div class="card-body">
         <div class="form-group row">

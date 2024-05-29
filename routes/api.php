@@ -26,6 +26,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::post('/login', LoginController::class)->name('login');
 Route::post('/register', RegisterController::class)->name('register');
+Route::post('/register1', RegisterController::class)->name('register1');
 Route::post('/logout', LogoutController::class)->name('logout');
 
 Route::get('levels', [LevelController::class, 'index']);

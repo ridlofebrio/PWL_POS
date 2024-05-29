@@ -59,35 +59,43 @@ public function create(){
     $activeMenu = 'barang';
 
     return view('barang.create', ['breadcrumb' => $breadcrumb,'page'=>$page, 'kategori' => $kategori, 'activeMenu' => $activeMenu]);
+
 }
 
-    public function store(Request $request)
-    {
-        //melakukan validasi data
-        $request->validate([
-            'barang_kode' => 'required|string',
-            'barang_nama' => 'required|string',
-            'harga_beli' => 'required|integer',
-            'harga_jual' => 'required|integer',
-            'kategori_id' => 'required|integer',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'barang_kode' => 'required|string',
+        'barang_nama' => 'required|string',
+        'harga_beli' => 'required|integer',
+        'harga_jual' => 'required|integer',
+        'kategori_id' => 'required|integer',
+        'berkas' => 'required|max:500' 
+    ]);
 
-        $existingBarang = BarangModel::where('barang_nama', $request->barang_nama)->first();
-        if ($existingBarang) {
-            return redirect('/barang')->with('error', 'Barang Telah Ada Tolong Lakukan Edit');
-        }
-
-        BarangModel::create([
-            'barang_kode' => $request->barang_kode,
-            'barang_nama' => $request->barang_nama,
-            'harga_beli' => $request->harga_beli,
-            'harga_jual' => $request->harga_jual,
-            'kategori_id' => $request->kategori_id
-        ]);
-
-        return redirect('/barang')->with('success', 'Data berhasil ditambahkan');
-    
+    $existingBarang = BarangModel::where('barang_nama', $request->barang_nama)->first();
+    if ($existingBarang) {
+        return redirect('/barang')->with('error', 'Barang Telah Ada Tolong Lakukan Edit');
     }
+
+    
+        $extfile = $request->berkas->extension();
+        $namaFile = $request->barang_nama . "." . $extfile;
+        $path = $request->berkas->move(public_path('gambar'), $namaFile);
+        $path = str_replace("\\", "/", $path);
+
+    BarangModel::create([
+        'barang_kode' => $request->barang_kode,
+        'barang_nama' => $request->barang_nama,
+        'harga_beli' => $request->harga_beli,
+        'harga_jual' => $request->harga_jual,
+        'kategori_id' => $request->kategori_id,
+        'image' => $namaFile
+    ]);
+
+    return redirect('/barang')->with('success', 'Data berhasil ditambahkan');
+}
+
     public function show(string $id)
     {
         $barang = barangModel::find($id);
